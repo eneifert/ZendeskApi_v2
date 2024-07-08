@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ZendeskApi_v2.Extensions;
 using ZendeskApi_v2.Models.Shared;
+using System.Collections.Specialized;
 
 namespace ZendeskApi_v2
 {
@@ -28,14 +29,14 @@ namespace ZendeskApi_v2
     {
 #if SYNC
         T GetByPageUrl<T>(string pageUrl, int perPage = 100);
-        T RunRequest<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
-        RequestResult RunRequest(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
+        T RunRequest<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null);
+        RequestResult RunRequest(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null);
 #endif
 
 #if ASYNC
         Task<T> GetByPageUrlAsync<T>(string pageUrl, int perPage = 100);
-        Task<T> RunRequestAsync<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
-        Task<RequestResult> RunRequestAsync(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null);
+        Task<T> RunRequestAsync<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null);
+        Task<RequestResult> RunRequestAsync(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null);
 #endif
     }
 
@@ -116,14 +117,14 @@ namespace ZendeskApi_v2
             return RunRequest<T>(resource, RequestMethod.Get);
         }
 
-        public T RunRequest<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null)
+        public T RunRequest<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null)
         {
-            var response = RunRequest(resource, requestMethod, body, timeout, formParameters);
+            var response = RunRequest(resource, requestMethod, body, timeout, formParameters, headers);
             var obj = JsonConvert.DeserializeObject<T>(response.Content, jsonSettings);
             return obj;
         }
 
-        public RequestResult RunRequest(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null)
+        public RequestResult RunRequest(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null)
         {
             try
             {
@@ -137,6 +138,11 @@ namespace ZendeskApi_v2
                 }
 
                 req.Headers["Authorization"] = GetPasswordOrTokenAuthHeader();
+                if (headers != null)
+                {
+                    req.Headers.Add(headers);
+                }
+
                 req.PreAuthenticate = true;
                 AddCustomHeaders(req);
 
@@ -297,9 +303,9 @@ namespace ZendeskApi_v2
             return res;
         }
 
-        protected T GenericPost<T>(string resource, object body = null)
+        protected T GenericPost<T>(string resource, object body = null, NameValueCollection headers = null)
         {
-            var res = RunRequest<T>(resource, RequestMethod.Post, body);
+            var res = RunRequest<T>(resource, RequestMethod.Post, body, headers: headers);
             return res;
         }
 
@@ -373,14 +379,14 @@ namespace ZendeskApi_v2
             return await RunRequestAsync<T>(resource, RequestMethod.Get);
         }
 
-        public async Task<T> RunRequestAsync<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null)
+        public async Task<T> RunRequestAsync<T>(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null)
         {
             var response = await RunRequestAsync(resource, requestMethod, body, timeout, formParameters);
             var obj = Task.Factory.StartNew(() => JsonConvert.DeserializeObject<T>(response.Content, jsonSettings));
             return await obj;
         }
 
-        public async Task<RequestResult> RunRequestAsync(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null)
+        public async Task<RequestResult> RunRequestAsync(string resource, string requestMethod, object body = null, int? timeout = null, Dictionary<string, object> formParameters = null, NameValueCollection headers = null)
         {
             var requestUrl = ZendeskUrl + resource;
             try
@@ -389,6 +395,11 @@ namespace ZendeskApi_v2
                 req.ContentType = "application/json";
 
                 req.Headers["Authorization"] = GetPasswordOrTokenAuthHeader();
+                if (headers != null)
+                {
+                    req.Headers.Add(headers);
+                }
+
                 req.Method = requestMethod; //GET POST PUT DELETE
                 req.Accept = "application/json, application/xml, text/json, text/x-json, text/javascript, text/xml";
                 AddCustomHeaders(req);
@@ -546,9 +557,9 @@ namespace ZendeskApi_v2
             return await res;
         }
 
-        protected async Task<T> GenericPostAsync<T>(string resource, object body = null)
+        protected async Task<T> GenericPostAsync<T>(string resource, object body = null, NameValueCollection headers = null)
         {
-            return await RunRequestAsync<T>(resource, RequestMethod.Post, body);
+            return await RunRequestAsync<T>(resource, RequestMethod.Post, body, headers: headers);
         }
 
         protected async Task<T> GenericPostFormAsync<T>(string resource, object body = null, Dictionary<string, object> formParameters = null)

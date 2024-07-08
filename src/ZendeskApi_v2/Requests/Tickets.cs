@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 
 #if ASYNC
@@ -77,7 +78,16 @@ namespace ZendeskApi_v2.Requests
 
         GroupTicketResponse GetMultipleTickets(IEnumerable<long> ids, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None);
 
-        IndividualTicketResponse CreateTicket(Ticket ticket);
+        /// <summary>
+        /// Creates a ticket.
+        /// If a idempotency-key is provided and the same request using the same body and idempotency key is repeated, another ticket is not created.
+        /// Instead, you'll get the same response as before that is cached under the idempotency key
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <param name="idempotencyKey">The Ticketing API lets you specify an idempotency key that allows you to retry a ticket creation request without the
+        /// risk of creating duplicate records.</param>
+        /// <returns></returns>
+        IndividualTicketResponse CreateTicket(Ticket ticket, string idempotencyKey = null);
 
         JobStatusResponse CreateManyTickets(IEnumerable<Ticket> tickets);
 
@@ -188,7 +198,16 @@ namespace ZendeskApi_v2.Requests
 
         Task<GroupTicketResponse> GetMultipleTicketsAsync(IEnumerable<long> ids, TicketSideLoadOptionsEnum sideLoadOptions = TicketSideLoadOptionsEnum.None);
 
-        Task<IndividualTicketResponse> CreateTicketAsync(Ticket ticket);
+        /// <summary>
+        /// Creates a ticket.
+        /// If a idempotency-key is provided and the same request using the same body and idempotency key is repeated, another ticket is not created.
+        /// Instead, you'll get the same response as before that is cached under the idempotency key
+        /// </summary>
+        /// <param name="ticket"></param>
+        /// <param name="idempotencyKey">The Ticketing API lets you specify an idempotency key that allows you to retry a ticket creation request without the
+        /// risk of creating duplicate records.</param>
+        /// <returns></returns>
+        Task<IndividualTicketResponse> CreateTicketAsync(Ticket ticket, string idempotencyKey = null);
 
         Task<JobStatusResponse> CreateManyTicketsAsync(IEnumerable<Ticket> tickets);
 
@@ -418,9 +437,18 @@ namespace ZendeskApi_v2.Requests
             return GenericGet<GroupTicketResponse>(resource);
         }
 
-        public IndividualTicketResponse CreateTicket(Ticket ticket)
+        public IndividualTicketResponse CreateTicket(Ticket ticket, string idempotencyKey = null)
         {
-            return GenericPost<IndividualTicketResponse>($"{_tickets}.json", new { ticket });
+            NameValueCollection headers = null;
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                headers = new NameValueCollection
+                {
+                    { "Idempotency-Key", idempotencyKey }
+                };
+            }
+
+            return GenericPost<IndividualTicketResponse>($"{_tickets}.json", new { ticket }, headers: headers);
         }
 
         public JobStatusResponse CreateManyTickets(IEnumerable<Ticket> tickets)
@@ -798,9 +826,18 @@ namespace ZendeskApi_v2.Requests
             return await GenericGetAsync<GroupTicketResponse>(GetResourceStringWithSideLoadOptionsParam($"{_tickets}/show_many.json?ids={ids.ToCsv()}", sideLoadOptions));
         }
 
-        public async Task<IndividualTicketResponse> CreateTicketAsync(Ticket ticket)
+        public async Task<IndividualTicketResponse> CreateTicketAsync(Ticket ticket, string idempotencyKey = null)
         {
-            return await GenericPostAsync<IndividualTicketResponse>($"{_tickets}.json", new { ticket });
+            NameValueCollection headers = null;
+            if (!string.IsNullOrEmpty(idempotencyKey))
+            {
+                headers = new NameValueCollection
+                {
+                    { "Idempotency-Key", idempotencyKey }
+                };
+            }
+
+            return await GenericPostAsync<IndividualTicketResponse>($"{_tickets}.json", new { ticket }, headers: headers);
         }
 
         public async Task<JobStatusResponse> CreateManyTicketsAsync(IEnumerable<Ticket> tickets)
