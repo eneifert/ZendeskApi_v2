@@ -31,7 +31,6 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
         Task<IndividualExternalContentSourceResponse> UpdateExternalContentSourceAsync(string externalSourceId, ExternalContentSource externalContentSource);
         Task<bool?> DeleteExternalContentSourceAsync(string externalSourceId);
 #endif
-
     }
 
     public class ExternalContentSources: Core, IExternalContentSources
@@ -50,21 +49,17 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
         public IndividualExternalContentSourceResponse ShowExternalContentSource(string externalSourceId)
         {
             var resourceUrl = $"{urlPrefix}/sources/{externalSourceId}";
-
             return GenericGet<IndividualExternalContentSourceResponse>(resourceUrl);
         }
         public GroupExternalContentSourcesResponse ListExternalContentSources(string after=null, string before=null, int? size=null)
         {
             var resourceUrl = $"{urlPrefix}/sources?" + BuildExternalContentQueryString(after,before,size);
-
             return GenericGet<GroupExternalContentSourcesResponse>(resourceUrl);
-
         }
 
         public IndividualExternalContentSourceResponse CreateExternalContentSource(ExternalContentSourceRequest externalContentSource)
         {
             var resourceUrl = $"{urlPrefix}/sources";
-
             return GenericPost<IndividualExternalContentSourceResponse>(resourceUrl,externalContentSource);
         }
 
@@ -84,22 +79,18 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
         public async Task<IndividualExternalContentSourceResponse> ShowExternalContentSourceAsync(string externalSourceId)
         {
             var resourceUrl = $"{urlPrefix}/sources/{externalSourceId}";
-
             return await GenericGetAsync<IndividualExternalContentSourceResponse>(resourceUrl);
         }
 
         public async Task<GroupExternalContentSourcesResponse> ListExternalContentSourcesAsync(string after=null, string before=null, int? size=null)
         {
             var resourceUrl = $"{urlPrefix}/sources?" + BuildExternalContentQueryString(after,before,size);
-
             return await GenericGetAsync<GroupExternalContentSourcesResponse>(resourceUrl);
-
         }
 
         public async Task<IndividualExternalContentSourceResponse> CreateExternalContentSourceAync(ExternalContentSourceRequest externalContentSource)
         {
             var resourceUrl = $"{urlPrefix}/sources";
-            
             return await GenericPostAsync<IndividualExternalContentSourceResponse>(resourceUrl,externalContentSource);
         }
 

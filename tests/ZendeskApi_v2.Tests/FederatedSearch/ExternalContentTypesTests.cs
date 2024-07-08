@@ -14,7 +14,6 @@ namespace ZendeskApi_v2.Tests.FederatedSearch;
 [Parallelizable(ParallelScope.None)]
 public class ExternalContentTypesTest : TestBase
 {
-
     private string _externalTypeId = String.Empty;
     private string _externalTypeIdAsync = String.Empty;
 
@@ -37,7 +36,6 @@ public class ExternalContentTypesTest : TestBase
     [Test, Order(2)]
     public async Task CanCreateExternalContentTypeAsync()
     {
-
         var testPayload = new ZendeskApi_v2.Models.FederatedSearch.ExternalContentTypeRequest
         {
             Type = new ZendeskApi_v2.Models.FederatedSearch.ExternalContentType
@@ -91,6 +89,5 @@ public class ExternalContentTypesTest : TestBase
     {
         var res =await Api.FederatedSearch.ExternalContentTypes.DeleteExternalContentTypeAsync(_externalTypeIdAsync);
         Assert.IsTrue(res == null || res == true);
-
     }
 }
