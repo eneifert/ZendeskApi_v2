@@ -20,7 +20,7 @@ namespace ZendeskApi_v2.Tests;
 [Category("Tickets")]
 public class TicketTests : TestBase
 {
-    private readonly TicketSideLoadOptionsEnum ticketSideLoadOptions = TicketSideLoadOptionsEnum.Users | TicketSideLoadOptionsEnum.Organizations | TicketSideLoadOptionsEnum.Groups | TicketSideLoadOptionsEnum.Comment_Count;
+    private readonly TicketSideLoadOptionsEnum ticketSideLoadOptions = TicketSideLoadOptionsEnum.Users | TicketSideLoadOptionsEnum.Organizations | TicketSideLoadOptionsEnum.Groups | TicketSideLoadOptionsEnum.Comment_Count | TicketSideLoadOptionsEnum.Dates;
 
     [OneTimeTearDown]
     public async Task TestCleanUp()
@@ -137,6 +137,7 @@ public class TicketTests : TestBase
             Assert.That(id, Is.EqualTo(ticket.Ticket.Id));
             Assert.That(ticket.Users.Any(), Is.True);
             Assert.That(ticket.Organizations.Any(), Is.True);
+            Assert.That(ticket.Ticket.Dates, Is.Not.Null);
         });
     }
 
@@ -1506,7 +1507,7 @@ public class TicketTests : TestBase
         Assert.That(newTicket.Via.Channel, Is.EqualTo("api"));
 
         var comment = new Comment { Body = secondCommentBody, Public = true };
-
+        await Task.Delay(1000);
         var resp2 = await Api.Tickets.UpdateTicketAsync(newTicket, comment);
         await Task.Delay(2000);
         var resp3 = await Api.Tickets.GetTicketCommentsAsync(newTicket.Id.Value);

@@ -30,7 +30,8 @@ namespace ZendeskApi_v2.Requests
         Sharing_Agreements = 64,
         Incident_Counts = 128,
         Ticket_Forms = 256,
-        Comment_Count = 512
+        Comment_Count = 512,
+        Dates = 1024
     }
 
     public interface ITickets : ICore
@@ -310,8 +311,8 @@ namespace ZendeskApi_v2.Requests
         private const string _ticket_metrics = "ticket_metrics";
         private const string _incremental_export = "incremental/tickets.json?start_time=";
 
-        public Tickets(string yourZendeskUrl, string user, string password, string apiToken, string p_OAuthToken)
-            : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken)
+        public Tickets(string yourZendeskUrl, string user, string password, string apiToken, string p_OAuthToken, Dictionary<string,string> customHeaders)
+            : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken, customHeaders)
         {
         }
 
