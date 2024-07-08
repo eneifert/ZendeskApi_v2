@@ -2,7 +2,9 @@
 using ZendeskApi_v2.Requests;
 using System.Net;
 using ZendeskApi_v2.HelpCenter;
+using ZendeskApi_v2.Requests.FederatedSearch;
 using System.Collections.Generic;
+using ZendeskApi_v2.FederatedSearch;
 
 #if Net35
 using System.Web;
@@ -36,6 +38,7 @@ namespace ZendeskApi_v2
         ISchedules Schedules { get; }
         ITargets Targets { get; }
         IAutomations Automations { get; }
+        IFederatedSearchApi FederatedSearch{get;}
 
         string ZendeskUrl { get; }
     }
@@ -65,6 +68,7 @@ namespace ZendeskApi_v2
         public ISchedules Schedules { get; set; }
         public ITargets Targets { get; set; }
         public IAutomations Automations { get; set; }
+        public IFederatedSearchApi FederatedSearch{get;set;}
 
         public string ZendeskUrl { get; set; }
 
@@ -167,6 +171,7 @@ namespace ZendeskApi_v2
             Schedules = new Schedules(formattedUrl, user, password, apiToken, p_OAuthToken, customHeaders);
             Targets = new Targets(formattedUrl, user, password, apiToken, p_OAuthToken, customHeaders);
             Automations = new Automations(formattedUrl, user, password, apiToken, p_OAuthToken, customHeaders);
+            FederatedSearch = new FederatedSearchApi(formattedUrl, user, password, apiToken, locale, p_OAuthToken, customHeaders);
 
             ZendeskUrl = formattedUrl;
         }
