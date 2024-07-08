@@ -50,21 +50,17 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
         public IndividualExternalContentRecordResponse ShowExternalContentRecord(string externalRecordId)
         {
             var resourceUrl = $"{urlPrefix}/records/{externalRecordId}";
-
             return GenericGet<IndividualExternalContentRecordResponse>(resourceUrl);
         }
         public GroupExternalContentRecordsResponse ListExternalContentRecords(string after=null, string before=null, int? size=null)
         {
             var resourceUrl = $"{urlPrefix}/records?" + BuildExternalContentQueryString(after,before,size);
-
             return GenericGet<GroupExternalContentRecordsResponse>(resourceUrl);
-
         }
 
         public IndividualExternalContentRecordResponse CreateExternalContentRecord(ExternalContentRecordRequest externalContentRecord)
         {
             var resourceUrl = $"{urlPrefix}/records";
-
             return GenericPost<IndividualExternalContentRecordResponse>(resourceUrl,externalContentRecord);
         }
 
@@ -84,7 +80,6 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
         public async Task<IndividualExternalContentRecordResponse> ShowExternalContentRecordAsync(string externalRecordId)
         {
             var resourceUrl = $"{urlPrefix}/records/{externalRecordId}";
-
             return await GenericGetAsync<IndividualExternalContentRecordResponse>(resourceUrl);
         }
 
@@ -93,13 +88,11 @@ namespace ZendeskApi_v2.Requests.FederatedSearch
             var resourceUrl = $"{urlPrefix}/records?" + BuildExternalContentQueryString(after,before,size);
 
             return await GenericGetAsync<GroupExternalContentRecordsResponse>(resourceUrl);
-
         }
 
         public async Task<IndividualExternalContentRecordResponse> CreateExternalContentRecordAsync(ExternalContentRecordRequest externalContentRecord)
         {
             var resourceUrl = $"{urlPrefix}/records";
-            
             return await GenericPostAsync<IndividualExternalContentRecordResponse>(resourceUrl,externalContentRecord);
         }
 

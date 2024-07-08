@@ -21,8 +21,8 @@ public class ExternalContentRecordsTest : TestBase
     private ExternalContentSource _externalContentSource = null;
 
     [OneTimeSetUp]
-    public void ExternalContentSetUp() {
-
+    public void ExternalContentSetUp() 
+    {
         var _externalContentTypePayload = new ExternalContentTypeRequest
         {
             Type = new ExternalContentType
@@ -32,8 +32,6 @@ public class ExternalContentRecordsTest : TestBase
         };
         var typeRes = Api.FederatedSearch.ExternalContentTypes.CreateExternalContentType(_externalContentTypePayload);
         _externalContentType = typeRes?.Type;
-
-        
 
         var _externalContentSourcePayload = new ZendeskApi_v2.Models.FederatedSearch.ExternalContentSourceRequest
         {
@@ -45,23 +43,16 @@ public class ExternalContentRecordsTest : TestBase
 
         var sourceRes = Api.FederatedSearch.ExternalContentSources.CreateExternalContentSource(_externalContentSourcePayload);
         _externalContentSource = sourceRes?.Source;
-
     }
-
     [OneTimeTearDown]
     public async Task ExternalContentCleanUp() 
     {
-
         await Api.FederatedSearch.ExternalContentSources.DeleteExternalContentSourceAsync(_externalContentSource.Id);
         await Api.FederatedSearch.ExternalContentTypes.DeleteExternalContentTypeAsync(_externalContentType.Id);
-
     }
-
-
     [Test, Order(1)]
     public void CanCreateAndUpdateExternalContentRecord()
     {
-
         var createRecordPayload = new ZendeskApi_v2.Models.FederatedSearch.ExternalContentRecordRequest { 
             Record = new ZendeskApi_v2.Models.FederatedSearch.CreateUpdateExternalContentRecord 
             {
@@ -89,11 +80,9 @@ public class ExternalContentRecordsTest : TestBase
             Assert.That(updateRes.Record.Body, Is.EqualTo(createRecordPayload.Record.Body));
         });
     }
-
     [Test, Order(2)]
     public async Task CanCreateAndUpdateExternalContentRecordAsync()
     {
-
         var createRecordPayload = new ZendeskApi_v2.Models.FederatedSearch.ExternalContentRecordRequest
         {
             Record = new ZendeskApi_v2.Models.FederatedSearch.CreateUpdateExternalContentRecord
@@ -120,7 +109,6 @@ public class ExternalContentRecordsTest : TestBase
         {
             Assert.That(updateRes.Record.Body, Is.EqualTo(createRecordPayload.Record.Body));
         });
-
     }
     [Test, Order(3)]
     public void CanGetSingleExternalContentRecord()
@@ -128,21 +116,18 @@ public class ExternalContentRecordsTest : TestBase
         var res = Api.FederatedSearch.ExternalContentRecords.ShowExternalContentRecord(_externalContentId);
         Assert.That(res.Record, Is.Not.Null);
     }
-
     [Test, Order(4)]
     public async Task CanGetSingleExternalContentRecordAsync()
     {
         var res = await Api.FederatedSearch.ExternalContentRecords.ShowExternalContentRecordAsync(_externalContentId);
         Assert.That(res.Record, Is.Not.Null);
     }
-
     [Test, Order(5)]
     public void CanGetExternalContentRecords()
     {
         var res = Api.FederatedSearch.ExternalContentRecords.ListExternalContentRecords();
         Assert.That(res.Records.Count, Is.GreaterThan(0));
     }
-
     [Test, Order(6)]
     public async Task CanGetExternalContentRecordsAsync()
     {
