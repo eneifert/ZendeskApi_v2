@@ -895,8 +895,295 @@ public class UserTests : TestBase
             }
         }
     }
+
+    [OneTimeTearDown]
+    public async Task TestCleanUp()
+    {
+        var response = await Api.Users.GetUserFieldsAsync();
+        foreach (var item in response.UserFields)
+        {
+            if (item.Title == "My Dropdown")
+            {
+                await Api.Users.DeleteUserFieldAsync(item.Id.Value);
+            }
+        }
+    }
+
+    [Test]
+    public async Task UserField()
+    {
+        var tField = new UserField
+        {
+            Type = UserFieldTypes.Dropdown,
+            Title = "My Dropdown",
+            Description = "Test description",
+            RawTitle = "My Dropdown",
+            RawDescription = "Test description",
+            CustomFieldOptions = new List<CustomFieldOptions>
+            {
+                new CustomFieldOptions
+                {
+                    Name = "test entryA",
+                    Value = "Test2"
+                },
+                new CustomFieldOptions
+                {
+                    Name = "test entryB",
+                    Value = "test3"
+                }
+            }
+        };
+
+        var res = await Api.Users.CreateUserFieldAsync(tField);
+        Assert.That(res.UserField, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField.Id, Is.Not.Null);
+            Assert.That(res.UserField.CustomFieldOptions, Has.Count.EqualTo(2));
+        });
+    }
+
+    [TestCase(true, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test_entryA", "test_entryA_newTitle", "test_entryB", "test_entryC")]
+    [TestCase(false, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test entryA", "test entryA newTitle", "test entryB", "test entryC")]
+    public void CanCreateUpdateOptionsAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, string name1, string name1_Update, string name2, string name3,
+        string expectedName1, string expectedName1_Update, string expectedName2, string expectedName3)
+    {
+         
+        var option1 = "test_value_a";
+        var option1_Update = "test value_a_newtag";
+        var option2 = "test_value_b";
+        var option3 = "test_value_c";
+
+        var tField = new UserField()
+        {
+            Type = UserFieldTypes.Dropdown,
+            Title = "My Dropdown",
+            Description = "Test description",
+            RawTitle = "My Dropdown",
+            RawDescription = "Test description",
+            CustomFieldOptions = new List<CustomFieldOptions>()
+        };
+
+        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = name1,
+            Value = option1
+        });
+
+        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = name2,
+            Value = option2
+        });
+
+        var res = Api.Users.CreateUserField(tField, replaceNameSpaceWithUnderscore);
+        Assert.That(res.UserField, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField.Id, Is.Not.Null);
+            Assert.That(res.UserField.CustomFieldOptions, Has.Count.EqualTo(2));
+        });
+        Assert.That(res.UserField.CustomFieldOptions[0].Value, Is.EqualTo(option1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField.CustomFieldOptions[1].Value, Is.EqualTo(option2));
+            Assert.That(res.UserField.CustomFieldOptions[0].Name, Is.EqualTo(expectedName1));
+            Assert.That(res.UserField.CustomFieldOptions[1].Name, Is.EqualTo(expectedName2));
+        });
+        var id = res.UserField.Id.Value;
+
+        var tFieldU = new UserField()
+        {
+            Id = id,
+            CustomFieldOptions = new List<CustomFieldOptions>()
+        };
+
+        //update CustomFieldOption A
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = name1_Update,
+            Value = option1_Update
+        });
+        //delete CustomFieldOption B
+        //add CustomFieldOption C
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = name3,
+            Value = option3
+        });
+
+        var resU = Api.Users.UpdateUserField(tFieldU, replaceNameSpaceWithUnderscore);
+
+        Assert.That(resU.UserField.CustomFieldOptions, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resU.UserField.CustomFieldOptions[0].Value, Is.EqualTo(option1_Update.Replace(" ", "_")));
+            Assert.That(resU.UserField.CustomFieldOptions[1].Value, Is.EqualTo(option3));
+            Assert.That(resU.UserField.CustomFieldOptions[0].Name, Is.EqualTo(expectedName1_Update));
+            Assert.That(resU.UserField.CustomFieldOptions[1].Name, Is.EqualTo(expectedName3));
+
+            Assert.That(Api.Users.DeleteUserField(id), Is.True);
+        });
+    }
+
+    [Test]
+    public async Task CanCreateUpdateOptionsAndDeleteDropdownUserFieldAsync()
+    {
+        var option1 = "test_value_a";
+        var option1_Update = "test_value_a_newtag";
+        var option2 = "test_value_b";
+        var option3 = "test_value_c";
+
+        var tField = new UserField()
+        {
+            Type = UserFieldTypes.Dropdown,
+            Title = "My Dropdown",
+            Description = "Test description",
+            RawTitle = "My Dropdown",
+            RawDescription = "Test description",
+            CustomFieldOptions = new List<CustomFieldOptions>()
+        };
+
+        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = "test entryA",
+            Value = option1
+        });
+
+        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = "test entryB",
+            Value = option2
+        });
+
+        var res = await Api.Users.CreateUserFieldAsync(tField);
+        Assert.That(res.UserField, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField.Id, Is.Not.Null);
+            Assert.That(res.UserField.CustomFieldOptions, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField.CustomFieldOptions[0].Value, Is.EqualTo(option1));
+            Assert.That(res.UserField.CustomFieldOptions[1].Value, Is.EqualTo(option2));
+        });
+        var id = res.UserField.Id.Value;
+
+        var tFieldU = new UserField()
+        {
+            Id = id,
+            CustomFieldOptions = new List<CustomFieldOptions>()
+        };
+
+        //update CustomFieldOption A
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = "test entryA newTitle",
+            Value = option1_Update
+        });
+        //delete CustomFieldOption B
+        //add CustomFieldOption C
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = "test entryC",
+            Value = option3
+        });
+
+        var resU = await Api.Users.UpdateUserFieldAsync(tFieldU);
+
+        Assert.That(resU.UserField.CustomFieldOptions, Has.Count.EqualTo(2));
+        Assert.Multiple(async () =>
+        {
+            Assert.That(resU.UserField.CustomFieldOptions[0].Value, Is.EqualTo(option1_Update));
+            Assert.That(resU.UserField.CustomFieldOptions[1].Value, Is.Not.EqualTo(option2));
+
+            Assert.That(await Api.Users.DeleteUserFieldAsync(id), Is.True);
+        });
+    }
+
+    [Test]
+    public void CanGetUserFields()
+    {
+        var res = Api.Users.GetUserFields();
+        Assert.That(res.UserFields, Is.Not.Empty);
+    }
+
+    [Test]
+    public void CanGetUserFieldById()
+    {
+        var id = Settings.CustomFieldId;
+        var userField = Api.Users.GetUserFieldById(id).UserField;
+        Assert.Multiple(() =>
+        {
+            Assert.That(userField, Is.Not.Null);
+            Assert.That(id, Is.EqualTo(userField.Id));
+        });
+    }
+
+    [Test]
+    public void CanGetUserFieldByIdAsync()
+    {
+        var id = Settings.CustomFieldId;
+        var userField = Api.Users.GetUserFieldByIdAsync(id).Result.UserField;
+        Assert.Multiple(() =>
+        {
+            Assert.That(userField, Is.Not.Null);
+            Assert.That(id, Is.EqualTo(userField.Id));
+        });
+    }
+
+    [Test]
+    public void CanCreateUpdateAndDeleteUserFields()
+    {
+        var tField = new UserField()
+        {
+            Type = UserFieldTypes.Text,
+            Title = "MyField",
+        };
+
+        var res = Api.Users.CreateUserField(tField);
+        Assert.That(res.UserField, Is.Not.Null);
+
+        var updatedTF = res.UserField;
+        updatedTF.Title = "My Custom Field";
+
+        var updatedRes = Api.Users.UpdateUserField(updatedTF);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updatedTF.Title, Is.EqualTo(updatedRes.UserField.Title));
+
+            Assert.That(Api.Users.DeleteUserField(updatedTF.Id.Value), Is.True);
+        });
+    }
+
+    [TestCase(true, "test entry", "test_entry")]
+    [TestCase(false, "test entry", "test entry")]
+    public void CanCreateAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, string name, string expectedName)
+    {
+        var tField = new UserField()
+        {
+            Type = UserFieldTypes.Dropdown,
+            Title = "My Dropdown",
+            Description = "Test description",
+            RawTitle = "My Dropdown",
+            RawDescription = "Test description",
+            CustomFieldOptions = new List<CustomFieldOptions>()
+        };
+
+        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        {
+            Name = name,
+            Value = "test value"
+        });
+
+        var res = Api.Users.CreateUserField(tField, replaceNameSpaceWithUnderscore);
+        Assert.Multiple(() =>
+        {
+            Assert.That(res.UserField, Is.Not.Null);
+            Assert.That(expectedName, Is.EqualTo(res.UserField.CustomFieldOptions[0].Name));
+
+            Assert.That(Api.Users.DeleteUserField(res.UserField.Id.Value), Is.True);
+        });
+    }
 }
-
-
-
-
