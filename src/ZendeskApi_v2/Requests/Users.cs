@@ -116,6 +116,12 @@ namespace ZendeskApi_v2.Requests
         GroupUserExportResponse GetIncrementalUserExportNextPage(string nextPage);
 
         GroupSubscriptionsResponse GetSubscriptions(long userId, SubscriptionSideLoadOptions subscriptionSideLoadOptions = SubscriptionSideLoadOptions.None, int? perPage = null, int? page = null);
+
+        GroupUserFieldResponse GetUserFields();
+        IndividualUserFieldResponse GetUserFieldById(long id);
+        IndividualUserFieldResponse CreateUserField(UserField userField, bool replaceNameSpacesWithUnderscore = true);
+        IndividualUserFieldResponse UpdateUserField(UserField userField, bool replaceNameSpacesWithUnderscore = false);
+        bool DeleteUserField(long id);
 #endif
 
 #if ASYNC
@@ -207,6 +213,12 @@ namespace ZendeskApi_v2.Requests
         Task<GroupUserExportResponse> GetIncrementalUserExportNextPageAsync(string nextPage);
 
         Task<GroupSubscriptionsResponse> GetSubscriptionsAsync(long userId, SubscriptionSideLoadOptions subscriptionSideLoadOptions = SubscriptionSideLoadOptions.None, int? perPage = null, int? page = null);
+
+        Task<GroupUserFieldResponse> GetUserFieldsAsync();
+        Task<IndividualUserFieldResponse> GetUserFieldByIdAsync(long id);
+        Task<IndividualUserFieldResponse> CreateUserFieldAsync(UserField ticketField, bool replaceNameSpacesWithUnderscore = true);
+        Task<IndividualUserFieldResponse> UpdateUserFieldAsync(UserField ticketField, bool replaceNameSpacesWithUnderscore = false);
+        Task<bool> DeleteUserFieldAsync(long id);
 #endif
     }
 
@@ -214,7 +226,7 @@ namespace ZendeskApi_v2.Requests
     {
         private const string _incremental_export = "incremental/users.json?start_time=";
 
-        public Users(string yourZendeskUrl, string user, string password, string apiToken, string p_OAuthToken, Dictionary<string,string> customHeaders)
+        public Users(string yourZendeskUrl, string user, string password, string apiToken, string p_OAuthToken, Dictionary<string, string> customHeaders)
             : base(yourZendeskUrl, user, password, apiToken, p_OAuthToken, customHeaders)
         {
         }
@@ -478,6 +490,53 @@ namespace ZendeskApi_v2.Requests
         {
             return GenericPagedGet<GroupSubscriptionsResponse>($"help_center/users/{userId}/subscriptions.json".SubscriptionSideloadUri(subscriptionSideLoadOptions), perPage, page);
         }
+
+        public GroupUserFieldResponse GetUserFields()
+        {
+            return GenericGet<GroupUserFieldResponse>("user_fields.json");
+        }
+
+        public IndividualUserFieldResponse GetUserFieldById(long id)
+        {
+            return GenericGet<IndividualUserFieldResponse>($"user_fields/{id}.json");
+        }
+        public IndividualUserFieldResponse CreateUserField(UserField userField, bool replaceNameSpacesWithUnderscore = true)
+        {
+            if (userField.CustomFieldOptions != null)
+            {
+                foreach (var field in userField.CustomFieldOptions)
+                {
+                    if (replaceNameSpacesWithUnderscore)
+                    {
+                        field.Name = field.Name.Replace(' ', '_');
+                    }
+                    field.Value = field.Value.Replace(' ', '_');
+                }
+            }
+            return GenericPost<IndividualUserFieldResponse>($"user_fields.json", new { user_field = userField });
+
+        }
+
+        public IndividualUserFieldResponse UpdateUserField(UserField userField, bool replaceNameSpacesWithUnderscore = true)
+        {
+            if (userField.CustomFieldOptions != null)
+            {
+                foreach (var field in userField.CustomFieldOptions)
+                {
+                    if (replaceNameSpacesWithUnderscore)
+                    {
+                        field.Name = field.Name.Replace(' ', '_');
+                    }
+                    field.Value = field.Value.Replace(' ', '_');
+                }
+            }
+            return GenericPut<IndividualUserFieldResponse>($"user_fields/{userField.Id}.json", new { user_field = userField });
+        }
+
+        public bool DeleteUserField(long id)
+        {
+            return GenericDelete($"user_fields/{id}.json");
+        }
 #endif
 
 #if ASYNC
@@ -724,6 +783,53 @@ namespace ZendeskApi_v2.Requests
         public Task<GroupSubscriptionsResponse> GetSubscriptionsAsync(long userId, SubscriptionSideLoadOptions subscriptionSideLoadOptions = SubscriptionSideLoadOptions.None, int? perPage = null, int? page = null)
         {
             return GenericPagedGetAsync<GroupSubscriptionsResponse>($"help_center/users/{userId}/subscriptions.json".SubscriptionSideloadUri(subscriptionSideLoadOptions), perPage, page);
+        }
+
+        public async Task<GroupUserFieldResponse> GetUserFieldsAsync()
+        {
+            return await GenericGetAsync<GroupUserFieldResponse>("user_fields.json");
+        }
+
+        public async Task<IndividualUserFieldResponse> GetUserFieldByIdAsync(long id)
+        {
+            return await GenericGetAsync<IndividualUserFieldResponse>($"user_fields/{id}.json");
+        }
+        public async Task<IndividualUserFieldResponse> CreateUserFieldAsync(UserField userField, bool replaceNameSpacesWithUnderscore = true)
+        {
+            if (userField.CustomFieldOptions != null)
+            {
+                foreach (var field in userField.CustomFieldOptions)
+                {
+                    if (replaceNameSpacesWithUnderscore)
+                    {
+                        field.Name = field.Name.Replace(' ', '_');
+                    }
+                    field.Value = field.Value.Replace(' ', '_');
+                }
+            }
+            return await GenericPostAsync<IndividualUserFieldResponse>($"user_fields.json", new { user_field = userField });
+
+        }
+
+        public async Task<IndividualUserFieldResponse> UpdateUserFieldAsync(UserField userField, bool replaceNameSpacesWithUnderscore = true)
+        {
+            if (userField.CustomFieldOptions != null)
+            {
+                foreach (var field in userField.CustomFieldOptions)
+                {
+                    if (replaceNameSpacesWithUnderscore)
+                    {
+                        field.Name = field.Name.Replace(' ', '_');
+                    }
+                    field.Value = field.Value.Replace(' ', '_');
+                }
+            }
+            return await GenericPutAsync<IndividualUserFieldResponse>($"user_fields/{userField.Id}.json", new { user_field = userField });
+        }
+
+        public async Task<bool> DeleteUserFieldAsync(long id)
+        {
+            return await GenericDeleteAsync($"user_fields/{id}.json");
         }
 #endif
         private string GetResourceStringWithSideLoadOptionsParam(string resource, UserSideLoadOptions sideLoadOptions)
