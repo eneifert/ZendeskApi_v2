@@ -216,8 +216,8 @@ namespace ZendeskApi_v2.Requests
 
         Task<GroupUserFieldResponse> GetUserFieldsAsync();
         Task<IndividualUserFieldResponse> GetUserFieldByIdAsync(long id);
-        Task<IndividualUserFieldResponse> CreateUserFieldAsync(UserField ticketField, bool replaceNameSpacesWithUnderscore = true);
-        Task<IndividualUserFieldResponse> UpdateUserFieldAsync(UserField ticketField, bool replaceNameSpacesWithUnderscore = false);
+        Task<IndividualUserFieldResponse> CreateUserFieldAsync(UserField userField, bool replaceNameSpacesWithUnderscore = true);
+        Task<IndividualUserFieldResponse> UpdateUserFieldAsync(UserField userField, bool replaceNameSpacesWithUnderscore = false);
         Task<bool> DeleteUserFieldAsync(long id);
 #endif
     }
