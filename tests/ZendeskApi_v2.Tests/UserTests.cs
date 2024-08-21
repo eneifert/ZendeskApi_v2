@@ -945,11 +945,8 @@ public class UserTests : TestBase
 
     [TestCase(true, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test_entryA", "test_entryA_newTitle", "test_entryB", "test_entryC")]
     [TestCase(false, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test entryA", "test entryA newTitle", "test entryB", "test entryC")]
-    public void CanCreateUpdateOptionsAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, 
-                                                                 string name1, string name1_Update, string name2, string name3,
-                                                                 string expectedName1, string expectedName1_Update, string expectedName2, string expectedName3)
+    public void CanCreateUpdateOptionsAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, string name1, string name1_Update, string name2, string name3, string expectedName1, string expectedName1_Update, string expectedName2, string expectedName3)
     {
-         
         var option1 = "test_value_a";
         var option1_Update = "test value_a_newtag";
         var option2 = "test_value_b";
