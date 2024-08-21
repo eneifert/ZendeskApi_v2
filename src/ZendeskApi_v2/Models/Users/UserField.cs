@@ -2,16 +2,23 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using ZendeskApi_v2.Models.Shared;
 
 namespace ZendeskApi_v2.Models.Users
 {
-    public class UserFieldBase
-    { 
-        [JsonProperty("key")]
-        public string Key { get; set; }
+    public class UserField
+    {
+        [JsonProperty("url")]
+        public string Url { get; set; }
+
+        [JsonProperty("id")]
+        public long? Id { get; set; }
 
         [JsonProperty("type")]
         public string Type { get; set; }
+
+        [JsonProperty("key")]
+        public string Key { get; set; }
 
         [JsonProperty("title")]
         public string Title { get; set; }
@@ -37,21 +44,6 @@ namespace ZendeskApi_v2.Models.Users
         [JsonProperty("regexp_for_validation")]
         public string RegexpForValidation { get; set; }
 
-        [JsonProperty("custom_field_options")]
-        public IList<CustomFieldOptions> CustomFieldOptions { get; set; }
-
-        [JsonProperty("tag")]
-        public string Tag { get; set; }
-    }
-
-    public class UserField : UserFieldBase
-    {
-        [JsonProperty("id")]
-        public long? Id { get; set; }
-
-        [JsonProperty("url")]
-        public string Url { get; set; }
-
         [JsonProperty("created_at")]
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTimeOffset? CreatedAt { get; set; }
@@ -59,23 +51,11 @@ namespace ZendeskApi_v2.Models.Users
         [JsonProperty("updated_at")]
         [JsonConverter(typeof(IsoDateTimeConverter))]
         public DateTimeOffset? UpdatedAt { get; set; }
-    }
 
-    public class CustomFieldOptions : FieldOptions
-    {
-        [JsonProperty("id")]
-        public long? Id { get; set; }
-    }
+        [JsonProperty("tag")]
+        public string Tag { get; set; }
 
-    public class FieldOptions
-    {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("raw_name")]
-        public string RawName { get; set; }
-
-        [JsonProperty("value")]
-        public string Value { get; set; }
+        [JsonProperty("custom_field_options")]
+        public IList<CustomFieldOption> CustomFieldOptions { get; set; }
     }
 }

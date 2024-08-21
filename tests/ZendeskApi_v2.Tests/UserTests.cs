@@ -919,14 +919,14 @@ public class UserTests : TestBase
             Description = "Test description",
             RawTitle = "My Dropdown",
             RawDescription = "Test description",
-            CustomFieldOptions = new List<CustomFieldOptions>
+            CustomFieldOptions = new List<CustomFieldOption>
             {
-                new CustomFieldOptions
+                new CustomFieldOption
                 {
                     Name = "test entryA",
                     Value = "Test2"
                 },
-                new CustomFieldOptions
+                new CustomFieldOption
                 {
                     Name = "test entryB",
                     Value = "test3"
@@ -945,8 +945,9 @@ public class UserTests : TestBase
 
     [TestCase(true, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test_entryA", "test_entryA_newTitle", "test_entryB", "test_entryC")]
     [TestCase(false, "test entryA", "test entryA newTitle", "test entryB", "test entryC", "test entryA", "test entryA newTitle", "test entryB", "test entryC")]
-    public void CanCreateUpdateOptionsAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, string name1, string name1_Update, string name2, string name3,
-        string expectedName1, string expectedName1_Update, string expectedName2, string expectedName3)
+    public void CanCreateUpdateOptionsAndDeleteDropdownUserField(bool replaceNameSpaceWithUnderscore, 
+                                                                 string name1, string name1_Update, string name2, string name3,
+                                                                 string expectedName1, string expectedName1_Update, string expectedName2, string expectedName3)
     {
          
         var option1 = "test_value_a";
@@ -961,16 +962,16 @@ public class UserTests : TestBase
             Description = "Test description",
             RawTitle = "My Dropdown",
             RawDescription = "Test description",
-            CustomFieldOptions = new List<CustomFieldOptions>()
+            CustomFieldOptions = new List<CustomFieldOption>()
         };
 
-        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        tField.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = name1,
             Value = option1
         });
 
-        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        tField.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = name2,
             Value = option2
@@ -995,18 +996,18 @@ public class UserTests : TestBase
         var tFieldU = new UserField()
         {
             Id = id,
-            CustomFieldOptions = new List<CustomFieldOptions>()
+            CustomFieldOptions = new List<CustomFieldOption>()
         };
 
         //update CustomFieldOption A
-        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = name1_Update,
             Value = option1_Update
         });
         //delete CustomFieldOption B
         //add CustomFieldOption C
-        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = name3,
             Value = option3
@@ -1041,16 +1042,16 @@ public class UserTests : TestBase
             Description = "Test description",
             RawTitle = "My Dropdown",
             RawDescription = "Test description",
-            CustomFieldOptions = new List<CustomFieldOptions>()
+            CustomFieldOptions = new List<CustomFieldOption>()
         };
 
-        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        tField.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = "test entryA",
             Value = option1
         });
 
-        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        tField.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = "test entryB",
             Value = option2
@@ -1073,18 +1074,18 @@ public class UserTests : TestBase
         var tFieldU = new UserField()
         {
             Id = id,
-            CustomFieldOptions = new List<CustomFieldOptions>()
+            CustomFieldOptions = new List<CustomFieldOption>()
         };
 
         //update CustomFieldOption A
-        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = "test entryA newTitle",
             Value = option1_Update
         });
         //delete CustomFieldOption B
         //add CustomFieldOption C
-        tFieldU.CustomFieldOptions.Add(new CustomFieldOptions()
+        tFieldU.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = "test entryC",
             Value = option3
@@ -1168,10 +1169,10 @@ public class UserTests : TestBase
             Description = "Test description",
             RawTitle = "My Dropdown",
             RawDescription = "Test description",
-            CustomFieldOptions = new List<CustomFieldOptions>()
+            CustomFieldOptions = new List<CustomFieldOption>()
         };
 
-        tField.CustomFieldOptions.Add(new CustomFieldOptions()
+        tField.CustomFieldOptions.Add(new CustomFieldOption()
         {
             Name = name,
             Value = "test value"
